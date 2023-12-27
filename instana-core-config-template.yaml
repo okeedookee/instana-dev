@@ -88,7 +88,9 @@ datastoreConfigs:
       adminUser: instana-superuser
       adminPassword: <RETRIEVED_FROM_SECRET>
   clickhouseConfigs:
-    - user: clickhouse-user
+    - user: default
       password: <USER_GENERATED_PASSWORD>
-      adminUser: clickhouse-user
+      adminUser: default
       adminPassword: <USER_GENERATED_PASSWORD>
+#    - user: clickhouse-user
+#      adminUser: clickhouse-user
