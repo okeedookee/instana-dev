@@ -1,0 +1,157 @@
+apiVersion: instana.io/v1beta2
+kind: Core
+metadata:
+  namespace: instana-core
+  name: instana-core
+spec:
+  properties:
+  - name: config.acceptor.http2.connector
+    value: "h2default"
+  featureFlags:
+  - enabled: false
+    name: feature.synthetics.enabled
+  - enabled: true
+    name: feature.logging.enabled
+  - enabled: true
+    name: feature.logging.infratags.enabled
+  - enabled: true
+    name: feature.beeinstana.infra.metrics.enabled
+  - enabled: true
+    name: feature.infra.explore.presentation.enabled
+  - enabled: true
+    name: feature.openstack.enabled
+  - enabled: true
+    name: feature.phmc.enabled
+  - enabled: true
+    name: feature.zhmc.enabled
+  - enabled: true
+    name: feature.internal.monitoring.unit
+  - enabled: true
+    name: feature.plugin.metric.statistics.enabled
+  - enabled: true
+    name: feature.infra.explore.data.enabled
+  baseDomain: BASE_DOMAIN 
+  agentAcceptorConfig:
+    host:  AGENT_HOST
+    port: 443
+  resourceProfile: medium
+  imagePullSecrets:
+    - name: instana-registry
+  # Datastore configs
+  datastoreConfigs:
+    cassandraConfigs:
+      - hosts: [ instana-cassandra-service.instana-cassandra ]
+        ports:
+          - name: tcp
+            port: 9042
+        keyspaces:
+          - profiles
+        # authEnabled: true
+      - hosts: [ instana-cassandra-service.instana-cassandra ]
+        ports:
+          - name: tcp
+            port: 9042
+        keyspaces:
+          - spans
+          - metrics
+          - state
+        # authEnabled: true
+    clickhouseConfigs:
+      - hosts:
+          - chi-instana-local-0-0.instana-clickhouse
+          - chi-instana-local-0-1.instana-clickhouse
+        authEnabled: false 
+        ports:
+          - name: tcp
+            port: 9000
+          - name: http
+            port: 8123
+        # schemas:
+        #   - application
+        #   - logs
+        #   - slis
+        clusterName: local
+        # authEnabled: true
+    postgresConfigs:
+      - hosts: [ postgres.instana-postgres ]   # for Datastores API
+        ports:
+          - name: tcp
+            port: 5432
+        databases:
+          - butlerdb
+          - tenantdb
+          - sales
+        # authEnabled: true
+    elasticsearchConfig:
+      hosts: [ instana-es-http.instana-elastic ]
+      ports:
+        - name: tcp
+          port: 9300
+        - name: http
+          port: 9200
+      clusterName: onprem_onprem
+      # authEnabled: true
+    kafkaConfig:
+      hosts: [ instana-kafka-bootstrap.instana-kafka ]
+      replicationFactor: 3
+      ports:
+        - name: tcp
+          port: 9092
+      # authEnabled: true
+    beeInstanaConfig:
+      hosts:
+      - aggregators.beeinstana
+      ports:
+      - name: tcp
+        port: 9998
+      # authEnabled: true
+  # Use one of smtpConfig or sesConfig
+  emailConfig:
+    smtpConfig:
+      from: test@example.com
+      host: test@example.com
+      port: 25
+      useSSL: false
+    # sesConfig:
+    #   from:
+    #   region:
+    #   returnPath:
+  # Use one of s3Config, gcloudConfig, or pvcConfig
+  # rawSpansStorageConfig:
+  storageConfigs:
+    rawSpans:
+      # gcloudConfig:
+      #   bucket: name
+      #   bucketLongTerm: name
+      #   prefix: storage.googleapis.com
+      #   prefixLongTerm: "onprem"
+      #   storageClass:  "onprem"
+      #   storageClassLongTerm: location
+      #   storageClass: STANDARD
+      #   storageClassLongTerm: STANDARD
+      pvcConfig:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 100Gi
+        storageClassName: ocs-storagecluster-cephfs
+    # s3Config:
+    #   bucket:
+    #   bucketLongTerm:
+    #   endpoint:
+    #   prefix:
+    #   prefixLongTerm:
+    #   region:
+    #   storageClass:
+    #   storageClassLongTerm:
+    #   accessKeyId:
+    #   secretAccessKey: 
+  # Service provider configs for SAML or OIDC
+  # serviceProviderConfig:
+    # Base URL (defaults to "/auth")
+    # basePath:
+    # The maximum IDP metadata size (defaults to 200000)
+    # maxAuthenticationLifetimeSeconds:
+    # The maximum authentication lifetime (defaults to 604800)
+    # maxIDPMetadataSizeInBytes:
