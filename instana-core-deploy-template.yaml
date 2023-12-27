@@ -77,7 +77,7 @@ spec:
         ports:
           - name: tcp
             port: 5432
-        authEnabled: true
+        authEnabled: true 
         databases:
           - butlerdb
           - tenantdb
