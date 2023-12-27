@@ -139,7 +139,7 @@ spec:
         generateName: "clickhouse-{chi}"
         spec:
           ports:
-            - name: http
+            - name: tcp
               port: 8123
             - name: tcp
               port: 9000
