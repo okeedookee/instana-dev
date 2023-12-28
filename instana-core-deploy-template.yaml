@@ -73,7 +73,8 @@ spec:
         clusterName: local
         # authEnabled: true
     postgresConfigs:
-      - hosts: [ postgres.instana-postgres ]   # for Datastores API
+      - hosts:
+          - postgres.instana-postgres 
         ports:
           - name: tcp
             port: 5432
