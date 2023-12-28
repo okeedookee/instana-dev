@@ -92,5 +92,3 @@ datastoreConfigs:
       password: <USER_GENERATED_PASSWORD>
       adminUser: clickhouse-user
       adminPassword: <USER_GENERATED_PASSWORD>
-#    - user: clickhouse-user
-#      adminUser: clickhouse-user
