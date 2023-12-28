@@ -14,7 +14,7 @@ spec:
     name: feature.logging.enabled
   - enabled: true
     name: feature.logging.infratags.enabled
-  - enabled: true
+  - enabled: false
     name: feature.beeinstana.infra.metrics.enabled
   - enabled: true
     name: feature.infra.explore.presentation.enabled
