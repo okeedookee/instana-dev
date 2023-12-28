@@ -79,7 +79,6 @@ spec:
           - name: tcp
             port: 5432
         databases:
-          - postgres
           - butlerdb
           - tenantdb
           - sales
