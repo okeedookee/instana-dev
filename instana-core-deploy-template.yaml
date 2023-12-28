@@ -82,7 +82,7 @@ spec:
           - butlerdb
           - tenantdb
           - sales
-        # authEnabled: true 
+        authEnabled: true 
         # authEnabled: true
     elasticsearchConfig:
       hosts: [ instana-es-http.instana-elastic ]
