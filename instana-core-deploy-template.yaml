@@ -85,7 +85,8 @@ spec:
         authEnabled: true 
         # authEnabled: true
     elasticsearchConfig:
-      hosts: [ instana-es-http.instana-elastic ]
+      hosts: 
+        - instana-es-http.instana-elastic
       ports:
         - name: tcp
           port: 9300
