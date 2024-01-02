@@ -34,7 +34,7 @@ spec:
   agentAcceptorConfig:
     host:  AGENT_HOST
     port: 443
-  resourceProfile: medium
+  resourceProfile: small
   imagePullSecrets:
     - name: instana-registry
   # Datastore configs
