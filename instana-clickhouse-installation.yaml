@@ -33,7 +33,7 @@ spec:
           podTemplate: clickhouse
         layout:
           shardsCount: 1
-          replicasCount: 2 # The the replication count of 2 is fixed for Instana backend installations
+          replicasCount: 2
         schemaPolicy:
           replica: None
           shard: None
@@ -65,35 +65,20 @@ spec:
       default/interval/read_rows: 0
       default/interval/execution_time: 0
     settings:
-      remote_servers/all-sharded/secret: clickhouse-default-pass
-      remote_servers/all-replicated/secret: clickhouse-default-pass
-      remote_servers/local/secret: clickhouse-default-pass
       max_concurrent_queries: 200
       max_table_size_to_drop: 0
       max_partition_size_to_drop: 0
     users:
-      default/password: "clickhouse-default-pass"
-      clickhouse-user/networks/ip: "::/0"
-      clickhouse-user/password: "clickhouse-pass"
-      # Or
-      # Generate password and the corresponding SHA256 hash with:
-      # $ PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD"; echo -n "$PASSWORD" | sha256sum | tr -d '-'
-      # 6edvj2+d                                                          <- first line is the password
-      # a927723f4a42cccc50053e81bab1fcf579d8d8fb54a3ce559d42eb75a9118d65  <- second line is the corresponding SHA256 hash
-      # clickhouse-user/password_sha256_hex: "a927723f4a42cccc50053e81bab1fcf579d8d8fb54a3ce559d42eb75a9118d65"
-      # Or
-      # Generate password and the corresponding SHA1 hash with:
-      # $ PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD"; echo -n "$PASSWORD" | sha1sum | tr -d '-' | xxd -r -p | sha1sum | tr -d '-'
-      # LJfoOfxl                                  <- first line is the password, put this in the k8s secret
-      # 3435258e803cefaab7db2201d04bf50d439f6c7f  <- the corresponding double SHA1 hash, put this below
-      # clickhouse-user/password_double_sha1_hex: "3435258e803cefaab7db2201d04bf50d439f6c7f"
+      default/networks/ip: "::/0"
+      default/no_password: "" 
   templates:
     podTemplates:
       - name: clickhouse
+        distribution: "OnePerHost"
         spec:
           containers:
             - name: instana-clickhouse
-              image: artifact-public.instana.io/self-hosted-images/k8s/clickhouse:23.3.10.5-1-lts-ibm_v0.29.0
+              image: artifact-public.instana.io/clickhouse-openssl:23.8.9.54-1-lts-ibm
               command:
                 - clickhouse-server
                 - --config-file=/etc/clickhouse-server/config.xml
@@ -104,9 +89,9 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - --      
+                - --
           imagePullSecrets:
-            - name: clickhouse-image-secret
+            - name: instana-registry
           securityContext:
             fsGroup: 0
             runAsGroup: 0
@@ -133,13 +118,13 @@ spec:
             - ReadWriteOnce
           resources:
             requests:
-              storage: 1Gi
+              storage: 10Gi
     serviceTemplates:
       - name: service-template
         generateName: "clickhouse-{chi}"
         spec:
           ports:
-            - name: tcp
+            - name: http
               port: 8123
             - name: tcp
               port: 9000
