@@ -1,3 +1,31 @@
+Skip to content
+Navigation Menu
+okeedookee
+/
+instana-dev
+
+Type / to search
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+Settings
+Commit
+Create instana-clickhouse-installation.yaml
+ main
+@okeedookee
+okeedookee committed on Dec 27, 2023 
+1 parent 31ab93c
+commit 90ca9b4
+Showing 1 changed file with 146 additions and 0 deletions.
+ 146 changes: 146 additions & 0 deletions146  
+instana-clickhouse-installation.yaml
+Original file line number	Original file line	Diff line number	Diff line change
+@@ -0,0 +1,146 @@
 apiVersion: "clickhouse.altinity.com/v1"
 kind: "ClickHouseInstallation"
 metadata:
@@ -33,7 +61,7 @@ spec:
           podTemplate: clickhouse
         layout:
           shardsCount: 1
-          replicasCount: 2
+          replicasCount: 2 # The the replication count of 2 is fixed for Instana backend installations
         schemaPolicy:
           replica: None
           shard: None
@@ -65,20 +93,35 @@ spec:
       default/interval/read_rows: 0
       default/interval/execution_time: 0
     settings:
+      remote_servers/all-sharded/secret: clickhouse-default-pass
+      remote_servers/all-replicated/secret: clickhouse-default-pass
+      remote_servers/local/secret: clickhouse-default-pass
       max_concurrent_queries: 200
       max_table_size_to_drop: 0
       max_partition_size_to_drop: 0
     users:
-      default/networks/ip: "::/0"
-      default/no_password: "" 
+      default/password: "clickhouse-default-pass"
+      clickhouse-user/networks/ip: "::/0"
+      clickhouse-user/password: "clickhouse-pass"
+      # Or
+      # Generate password and the corresponding SHA256 hash with:
+      # $ PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD"; echo -n "$PASSWORD" | sha256sum | tr -d '-'
+      # 6edvj2+d                                                          <- first line is the password
+      # a927723f4a42cccc50053e81bab1fcf579d8d8fb54a3ce559d42eb75a9118d65  <- second line is the corresponding SHA256 hash
+      # clickhouse-user/password_sha256_hex: "a927723f4a42cccc50053e81bab1fcf579d8d8fb54a3ce559d42eb75a9118d65"
+      # Or
+      # Generate password and the corresponding SHA1 hash with:
+      # $ PASSWORD=$(base64 < /dev/urandom | head -c8); echo "$PASSWORD"; echo -n "$PASSWORD" | sha1sum | tr -d '-' | xxd -r -p | sha1sum | tr -d '-'
+      # LJfoOfxl                                  <- first line is the password, put this in the k8s secret
+      # 3435258e803cefaab7db2201d04bf50d439f6c7f  <- the corresponding double SHA1 hash, put this below
+      # clickhouse-user/password_double_sha1_hex: "3435258e803cefaab7db2201d04bf50d439f6c7f"
   templates:
     podTemplates:
       - name: clickhouse
-        distribution: "OnePerHost"
         spec:
           containers:
             - name: instana-clickhouse
-              image: artifact-public.instana.io/clickhouse-openssl:23.8.9.54-1-lts-ibm
+              image: artifact-public.instana.io/self-hosted-images/k8s/clickhouse:23.3.10.5-1-lts-ibm_v0.29.0
               command:
                 - clickhouse-server
                 - --config-file=/etc/clickhouse-server/config.xml
@@ -89,9 +132,9 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - --
+                - --      
           imagePullSecrets:
-            - name: instana-registry
+            - name: clickhouse-image-secret
           securityContext:
             fsGroup: 0
             runAsGroup: 0
@@ -118,14 +161,33 @@ spec:
             - ReadWriteOnce
           resources:
             requests:
-              storage: 10Gi
+              storage: 1Gi
     serviceTemplates:
       - name: service-template
         generateName: "clickhouse-{chi}"
         spec:
           ports:
-            - name: http
+            - name: tcp
               port: 8123
             - name: tcp
               port: 9000
           type: ClusterIP
+0 comments on commit 90ca9b4
+@okeedookee
+Comment
+ 
+Leave a comment
+ 
+ You’re receiving notifications because you’re watching this repository.
+Footer
+© 2024 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+History for instana-clickhouse-installation.yaml - okeedookee/instana-dev Sign in now to use Zenhub
