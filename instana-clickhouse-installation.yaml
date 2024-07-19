@@ -11,36 +11,36 @@ spec:
     files:
       config.d/storage.xml: |
         <yandex>
-     <storage_configuration>
-       <disks>
-         <default/>
-         <cold_disk>
-           <path>/var/lib/clickhouse-cold/</path>
-         </cold_disk>
-       </disks>
-       <policies>
-         <logs_policy>
-           <volumes>
-             <data>
-               <disk>default</disk>
-             </data>
-             <cold>
-               <disk>cold_disk</disk>
-             </cold>
-           </volumes>
-         </logs_policy>
-         <logs_policy_v4>
-           <volumes>
-             <tier1>
-               <disk>default</disk>
-             </tier1>
-             <tier2>
-               <disk>cold_disk</disk>
-             </tier2>
-           </volumes>
-         </logs_policy_v4>
-       </policies>
-     </storage_configuration>
+          <storage_configuration>
+            <disks>
+              <default/>
+              <cold_disk>
+                <path>/var/lib/clickhouse-cold/</path>
+              </cold_disk>
+            </disks>
+            <policies>
+              <logs_policy>
+                <volumes>
+                  <data>
+                    <disk>default</disk>
+                  </data>
+                  <cold>
+                    <disk>cold_disk</disk>
+                  </cold>
+                </volumes>
+              </logs_policy>
+              <logs_policy_v4>
+                <volumes>
+                  <tier1>
+                    <disk>default</disk>
+                  </tier1>
+                  <tier2>
+                    <disk>cold_disk</disk>
+                  </tier2>
+                </volumes>
+              </logs_policy_v4>
+            </policies>
+          </storage_configuration>
         </yandex>
     clusters:
       - name: local
