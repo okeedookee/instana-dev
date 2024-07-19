@@ -15,7 +15,7 @@ spec:
             <disks>
               <default/>
               <cold_disk>
-                <path>/var/lib/clickhouse-cold/</path>
+                <path>"/var/lib/clickhouse-cold/"</path>
               </cold_disk>
             </disks>
             <policies>
