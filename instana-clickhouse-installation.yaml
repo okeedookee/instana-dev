@@ -21,9 +21,11 @@ spec:
                   <data>
                     <disk>default</disk>
                   </data>
+                  <!--
                   <cold>
                     <disk>cold_disk</disk>
                   </cold>
+                  -->
                 </volumes>
               </logs_policy>
               <logs_policy_v4>
@@ -32,7 +34,10 @@ spec:
                     <disk>default</disk>
                   </tier1>
                   <tier2>
+                    <disk>default</disk>
+                  <!--
                     <disk>cold_disk</disk>
+                    -->
                   </tier2>
                 </volumes>
               </logs_policy_v4>
